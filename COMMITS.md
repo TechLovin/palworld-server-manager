@@ -2,6 +2,14 @@
 
 One entry per commit, newest first.
 
+## Upgrade electron-builder 25 → 26 — 2026-10-27
+
+- `electron-builder` 25.1.8 → 26.18.0. `npm audit` now reports 0 vulnerabilities.
+- Config: none of 26's breaking changes apply (signing options moved, macOS notarization and publishing changes), and the schema validates as-is.
+- Packaging fix: 26 skips a `node_modules` folder at the top of any copied folder, including `extraResources`. The bundled server therefore shipped without its dependencies (`Cannot find module 'next'`). Added a second `extraResources` entry that copies `dist-standalone/node_modules` → `app/node_modules`.
+- 26 also no longer hits the winCodeSign symlink error, so `npm run dist:win` works on this machine without Developer Mode or admin rights.
+- Verified: built the NSIS installer and portable exe (icon and version info embedded). The packaged app tree and installer payload match `dist-standalone` (3,177 files). Launched the portable exe in isolation: server, background tasks, preload/IPC and portable data folder all work. The installer itself was not run.
+
 ## Upgrade Electron 37 → 45 — 2026-10-27
 
 - `electron` 37.10.3 → 45.1.0 (Chromium 156, Node 24.22.1).

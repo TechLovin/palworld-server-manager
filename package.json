@@ -35,7 +35,7 @@
     "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
     "electron": "^45.1.0",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.18.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "wait-on": "^8.0.1"
@@ -51,6 +51,10 @@
       {
         "from": "dist-standalone",
         "to": "app"
+      },
+      {
+        "from": "dist-standalone/node_modules",
+        "to": "app/node_modules"
       }
     ],
     "directories": {
