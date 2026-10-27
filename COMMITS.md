@@ -2,6 +2,17 @@
 
 One entry per commit, newest first.
 
+## Upgrade Electron 37 → 45 — 2026-10-27
+
+- `electron` 37.10.3 → 45.1.0 (Chromium 156, Node 24.22.1).
+- `electron/main.js`:
+  - Dropped `openAsHidden` / `wasOpenedAsHidden`, which Electron 44 removed. They only ever worked on macOS 12 and older, and `--hidden` still handles start-to-tray on Windows and Linux.
+  - The folder and zip pickers now remember the last folder used during the session. Since Electron 43 they would otherwise always open in Downloads.
+- `preload.js`: no change needed. It only uses `electron` and `process.platform`, both still available in the sandboxed preload.
+- Install note: since Electron 42, `npm install` no longer downloads the Electron binary. `npm run dev` fetches it on first run, or run `npx install-electron --no`.
+- Vulnerabilities: 14 → 12 (what remains is electron-builder and its dependencies).
+- Verified: packaged with `electron-builder --dir` and launched the desktop app with isolated data. The window, the HttpOnly admin cookie, the preload bridge, all IPC getters, the server restart via port change, and clean quit all work.
+
 ## Upgrade Next.js 14 → 16 and React 18 → 19 — 2026-10-27
 
 - `next` 14.2.35 → 16.4.3, `react`/`react-dom` 18.3.1 → 19.3.1. This also brings in a fixed `postcss`.

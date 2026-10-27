@@ -204,9 +204,9 @@ function applyAutostart(enabled) {
     return;
   }
   // Windows (and, best-effort, any other platform): Electron owns this natively.
-  // args:["--hidden"] so the login launch starts to the tray; openAsHidden covers the
-  // platforms that honour it. A hand-launched copy gets neither and opens a window.
-  try { app.setLoginItemSettings({ openAtLogin: enabled, openAsHidden: enabled, args: ["--hidden"] }); } catch (e) { logToFile(`setLoginItemSettings failed: ${e.message}`); }
+  // args:["--hidden"] so the login launch starts to the tray. A hand-launched copy
+  // doesn't get it and opens a window.
+  try { app.setLoginItemSettings({ openAtLogin: enabled, args: ["--hidden"] }); } catch (e) { logToFile(`setLoginItemSettings failed: ${e.message}`); }
 }
 
 function initAutostart() {
@@ -527,11 +527,10 @@ function main() {
     initAutostart();
 
     // Did we launch at login (autostart-to-tray) rather than by hand? The .desktop /
-    // login-item pass --hidden; Windows also reports it via getLoginItemSettings.
+    // login-item pass --hidden; macOS also reports it via getLoginItemSettings.
     launchedHidden = process.argv.includes("--hidden");
     try {
-      const li = app.getLoginItemSettings();
-      if (li.wasOpenedAtLogin || li.wasOpenedAsHidden) launchedHidden = true;
+      if (app.getLoginItemSettings().wasOpenedAtLogin) launchedHidden = true;
     } catch {}
 
     startNextServer();
@@ -581,16 +580,25 @@ function main() {
 }
 
 // ---- Native IPC: folder picker + file picker for the renderer ----
+// Since Electron 43 the pickers open in Downloads unless given a defaultPath, and the OS
+// no longer restores the last-used folder. Track it ourselves (per picker, this session).
+let lastPickedDir;
+let lastZipDir;
 ipcMain.handle("pick-directory", async () => {
-  const res = await dialog.showOpenDialog(mainWindow, { properties: ["openDirectory", "createDirectory"] });
-  return res.canceled ? null : res.filePaths[0];
+  const res = await dialog.showOpenDialog(mainWindow, { defaultPath: lastPickedDir, properties: ["openDirectory", "createDirectory"] });
+  if (res.canceled) return null;
+  lastPickedDir = path.dirname(res.filePaths[0]);
+  return res.filePaths[0];
 });
 ipcMain.handle("pick-zip", async () => {
   const res = await dialog.showOpenDialog(mainWindow, {
+    defaultPath: lastZipDir,
     properties: ["openFile"],
     filters: [{ name: "Zip archives", extensions: ["zip"] }],
   });
-  return res.canceled ? null : res.filePaths[0];
+  if (res.canceled) return null;
+  lastZipDir = path.dirname(res.filePaths[0]);
+  return res.filePaths[0];
 });
 ipcMain.handle("get-theme", () => (nativeTheme.shouldUseDarkColors ? "dark" : "light"));
 ipcMain.handle("get-system-locale", () => app.getLocale() || "en");
