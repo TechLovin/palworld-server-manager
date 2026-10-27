@@ -8,7 +8,8 @@ export const runtime = "nodejs";
 
 // GET: current chat buffer + whether the capture mod / UE4SS are installed for this
 // world, and whether the capture feature is enabled globally.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "chat" });
   if (denied) return denied;
   const w = dbm.getWorld(params.id);
@@ -26,7 +27,8 @@ export async function GET(req, { params }) {
 }
 
 // POST: install the bundled PSMChatRelay UE4SS mod into this world's server.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "chat", action: "chat.installMod", mutating: true });
@@ -42,7 +44,8 @@ export async function POST(req, { params }) {
 
 // DELETE: remove the chat relay mod from this world's server. The escape hatch if a
 // Palworld update ever makes the mod misbehave — the game then runs mod-free.
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "chat", action: "chat.removeMod", mutating: true });

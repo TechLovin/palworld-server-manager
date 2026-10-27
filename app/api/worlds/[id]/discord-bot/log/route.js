@@ -14,7 +14,8 @@ export const runtime = "nodejs";
 // offer a real list of people to filter by instead of asking for an id, and it's built
 // from the log itself — someone who has since lost access still appears in their own
 // history.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "discordbot" });

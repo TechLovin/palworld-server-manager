@@ -13,7 +13,8 @@ function worldOverrides(w) {
 // Per-world Pal display-name overrides. `globalOverrides` is returned too so the editor can
 // show what each name inherits when left blank, and `unmapped` lists this world's
 // unnamed Pals (not known and not covered by the world OR global override).
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "deaths" });
@@ -24,7 +25,8 @@ export async function GET(req, { params }) {
   return NextResponse.json({ ok: true, overrides, globalOverrides, unmapped });
 }
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "deaths", action: "palnames.save", mutating: true });

@@ -5,7 +5,8 @@ const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "backups", action: "backup.restore", mutating: true });
   if (denied) return denied;
   const { backupId } = await req.json();

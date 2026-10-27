@@ -9,7 +9,8 @@ export const runtime = "nodejs";
 
 // POST: restore a historical version — snapshot the current file first, then
 // write the chosen version's content back to PalWorldSettings.ini.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "settings", action: "ini.restore", mutating: true });

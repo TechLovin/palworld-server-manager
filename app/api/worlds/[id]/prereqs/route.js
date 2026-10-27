@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 // GET  → current runtime status (Windows): { vcredist, directx, ok, hasBundled }.
 // POST → kick off an elevated install job (downloads MS VC++ + runs the bundled UE
 //        prereq installer), surfaced in the Downloads tray. Returns { jobId }.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id });
@@ -19,7 +20,8 @@ export async function GET(req, { params }) {
   return NextResponse.json({ ok: true, ...status, hasBundled: !!prereqs.bundledPrereqPath(w.install_dir), vcRedistUrl: prereqs.VC_REDIST_URL });
 }
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "overview", action: "prereqs.install", mutating: true });

@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // GET: the full content of one historical version (for preview / diff).
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "settings" });

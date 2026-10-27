@@ -8,7 +8,8 @@ export const runtime = "nodejs";
 
 // Exports a world PROFILE (settings + customization + metadata) as a zip.
 // Does NOT include the multi-GB save/install — this is for sharing config.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "admin" });

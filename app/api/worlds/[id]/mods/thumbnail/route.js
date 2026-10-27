@@ -11,7 +11,8 @@ const MIME = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" 
 // GET ?folder=<workshop folder> — serve a mod's preview image. The renderer has no
 // disk access, so mod art has to come back through the server. 404 (not an error
 // page) when a mod ships no thumbnail: the UI just falls back to its icon.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods" });
   if (denied) return denied;
   const folder = new URL(req.url).searchParams.get("folder");

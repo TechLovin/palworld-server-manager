@@ -7,7 +7,8 @@ export const runtime = "nodejs";
 
 // Admin-only: the per-code action log. Rows survive the code's deletion (they carry a
 // denormalized snapshot), so this reads by code id whether or not the code still exists.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   if (!ra.requireAdmin(req)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const limit = Number(new URL(req.url).searchParams.get("limit")) || 200;
   const rows = dbm.listRemoteAudit(params.id, limit).map((r) => ({

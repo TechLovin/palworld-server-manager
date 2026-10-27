@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 //   { action: "toggle", name, enabled }
 //   { action: "import", zipPath }
 //   { action: "remove", name }
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "ue4ss.mods", mutating: true });

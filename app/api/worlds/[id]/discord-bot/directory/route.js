@@ -26,7 +26,8 @@ function defaultAvatar(user) {
 // Missing Access. That's a switch only the bot's owner can flip in the developer
 // portal, so we report it as a state rather than an error and let the UI explain it —
 // the paste-an-id path keeps working either way.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "discordbot" });

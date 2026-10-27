@@ -7,7 +7,8 @@ export const runtime = "nodejs";
 // Serves the i18next resource bundle for one language (English always included as
 // the fallback). The client fetches this when switching to a language it hasn't
 // loaded yet, then addResourceBundle + changeLanguage on the shared instance.
-export async function GET(_req, { params }) {
+export async function GET(_req, ctx) {
+  const params = await ctx.params;
   const lng = params.lng;
   const resources = loadResources(lng);
   if (lng !== BASE && !resources[lng]) {

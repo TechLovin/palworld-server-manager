@@ -28,7 +28,8 @@ function state(world) {
   };
 }
 
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "players" });
@@ -36,7 +37,8 @@ export async function GET(req, { params }) {
   return NextResponse.json({ ok: true, ...state(w) });
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "players", action: "loginRewards.setPath", mutating: true });
@@ -53,7 +55,8 @@ export async function PUT(req, { params }) {
   return NextResponse.json({ ok: true, ...state(w) });
 }
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "players", action: "loginRewards.upload", mutating: true });

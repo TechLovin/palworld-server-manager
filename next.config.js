@@ -2,20 +2,19 @@
 const nextConfig = {
   output: "standalone",
   reactStrictMode: false,
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   // Keep native/wasm SQLite backends external so their files (incl. the .wasm
   // binary) are traced into the standalone node_modules rather than bundled.
-  experimental: {
-    // discord.js is required at runtime by the per-world Discord bot. It must stay
-    // external: webpack would otherwise try to bundle it and fail on its optional
-    // native deps (zlib-sync, bufferutil), which it only uses when they exist.
-    serverComponentsExternalPackages: ["node-sqlite3-wasm", "discord.js"],
-    // Never trace the local runtime data dir into the standalone build. `.data/`
-    // holds the dev database (worlds + admin passwords), SteamCMD, logs and backups;
-    // it must be created fresh on the end user's machine, never shipped in the app.
-    outputFileTracingExcludes: { "*": [".data/**", "release/**", "dist-standalone/**"] },
-  },
+  // discord.js is required at runtime by the per-world Discord bot. It must stay
+  // external: webpack would otherwise try to bundle it and fail on its optional
+  // native deps (zlib-sync, bufferutil), which it only uses when they exist.
+  serverExternalPackages: ["node-sqlite3-wasm", "discord.js"],
+  // Never trace the local runtime data dir into the standalone build. `.data/`
+  // holds the dev database (worlds + admin passwords), SteamCMD, logs and backups;
+  // it must be created fresh on the end user's machine, never shipped in the app.
+  outputFileTracingExcludes: { "*": [".data/**", "release/**", "dist-standalone/**"] },
+  // Next 16 builds with Turbopack by default; the scripts pass --webpack so this
+  // config keeps applying.
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals || [];

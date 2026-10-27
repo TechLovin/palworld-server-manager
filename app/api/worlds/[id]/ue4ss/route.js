@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // GET: UE4SS install status + Lua mod list for this world.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods" });
@@ -18,7 +19,8 @@ export async function GET(req, { params }) {
 
 // PATCH: force GuiConsoleVisible=0 (a manually-installed UE4SS with the console on
 // crashes a dedicated server). Idempotent.
-export async function PATCH(req, { params }) {
+export async function PATCH(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "ue4ss.fixConsole", mutating: true });
@@ -29,7 +31,8 @@ export async function PATCH(req, { params }) {
 }
 
 // POST: install UE4SS from a user-provided zip path. Refused while running.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "ue4ss.install", mutating: true });

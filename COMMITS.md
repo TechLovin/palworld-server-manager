@@ -2,6 +2,17 @@
 
 One entry per commit, newest first.
 
+## Upgrade Next.js 14 → 16 and React 18 → 19 — 2026-10-27
+
+- `next` 14.2.35 → 16.4.3, `react`/`react-dom` 18.3.1 → 19.3.1. This also brings in a fixed `postcss`.
+- Route handlers: Next 15 made route `params` async. All 74 handlers that use them (45 files) now do `const params = await ctx.params;`.
+- `next.config.js`: `experimental.serverComponentsExternalPackages` → `serverExternalPackages`, and `outputFileTracingExcludes` is now top-level. Removed the `eslint` option, which Next 16 dropped.
+- `middleware.js` → `proxy.js` (Next 16 rename). The logic is unchanged.
+- Scripts: `dev:next` and `build:next` pass `--webpack` to keep the custom webpack config (Next 16 defaults to Turbopack). Removed `lint`: `next lint` is gone in 16 and ESLint was never installed.
+- React 19: one callback ref (`app/remote/page.jsx`) now uses a block body. No other affected APIs are used.
+- Vulnerabilities: 16 → 14. No Next.js/PostCSS findings remain.
+- Verified: clean build. Ran the packaged standalone server under Electron's Node and checked every page, the proxy redirect, the async-params API routes, and the client UI in a browser with no console errors.
+
 ## Upgrade adm-zip to 0.6.1 and guard manual zip extraction — 2026-10-27
 
 - `adm-zip` 0.5.18 → 0.6.1. No API changes affect our usage (all 10 call sites checked).

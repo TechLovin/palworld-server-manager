@@ -6,7 +6,8 @@ const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const { command, message, userid, waittime } = await req.json();

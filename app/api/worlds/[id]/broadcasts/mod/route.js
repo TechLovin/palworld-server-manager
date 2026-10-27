@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // GET: whether the on-screen broadcast mod / UE4SS are installed for this world.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast" });
   if (denied) return denied;
   const w = dbm.getWorld(params.id);
@@ -24,7 +25,8 @@ export async function GET(req, { params }) {
 }
 
 // POST: install the bundled PSMBroadcast UE4SS mod into this world's server.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast", action: "broadcast.installMod", mutating: true });
@@ -40,7 +42,8 @@ export async function POST(req, { params }) {
 
 // DELETE: remove the broadcast mod from this world's server. Broadcasts then fall back
 // to the REST announce (chat feed).
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast", action: "broadcast.removeMod", mutating: true });

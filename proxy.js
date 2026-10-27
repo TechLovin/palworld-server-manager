@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 
 // Page-level redirect for Remote Access — defense-in-depth on top of the authoritative
-// per-route API guard (lib/remoteauth.authorize). This runs in the edge runtime, so it can
-// only read cookies + env, never the DB. It therefore gates purely on the admin token:
+// per-route API guard (lib/remoteauth.authorize). It deliberately never touches the DB, so it
+// reads only cookies + env and gates purely on the admin token:
 //
 //   • No PSM_ADMIN_TOKEN configured (plain loopback dev, or the desktop app never armed
 //     Remote Access this launch) → do nothing. The server is loopback-only anyway.
 //   • Token configured → a navigation without the matching `psm_admin` cookie is a remote
 //     guest; send page loads to /remote instead of the admin shell. API calls are left to
 //     answer so their own guard returns a proper 403 (and disabled/revoked codes are caught
-//     there, which the edge can't check).
-export function middleware(req) {
+//     there, which this cookie-only check can't see).
+export function proxy(req) {
   const token = process.env.PSM_ADMIN_TOKEN;
   if (!token) return NextResponse.next();
 

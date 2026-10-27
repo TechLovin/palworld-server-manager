@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // Edit a pending scheduled broadcast's message and/or time.
-export async function PATCH(req, { params }) {
+export async function PATCH(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast", action: "broadcast.edit", mutating: true });
   if (denied) return denied;
   const body = await req.json();
@@ -29,7 +30,8 @@ export async function PATCH(req, { params }) {
 }
 
 // Delete (cancel) a pending scheduled broadcast.
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast", action: "broadcast.cancel", mutating: true });
   if (denied) return denied;
   dbm.deleteBroadcast(params.bid);

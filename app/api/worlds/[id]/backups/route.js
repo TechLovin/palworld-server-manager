@@ -6,13 +6,15 @@ const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "backups" });
   if (denied) return denied;
   return NextResponse.json({ ok: true, backups: dbm.listBackups(params.id) });
 }
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "backups", action: "backup.create", mutating: true });
   if (denied) return denied;
   try {

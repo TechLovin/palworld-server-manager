@@ -22,7 +22,8 @@ async function deliverBroadcast(w, message) {
 }
 
 // List this world's pending scheduled broadcasts + on-screen-mod status for the UI.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast" });
   if (denied) return denied;
   const w = dbm.getWorld(params.id);
@@ -40,7 +41,8 @@ export async function GET(req, { params }) {
 
 // POST { message, immediate } -> send now
 // POST { message, fire_at }   -> schedule for later
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "broadcast", action: "broadcast.send", mutating: true });

@@ -18,7 +18,8 @@ function enrich(c) {
 
 // Edit a code's scope/tabs/label or enable/disable it. Changes take effect on the guest's
 // next heartbeat (~live): disabling makes resolveSession() return null, ending the session.
-export async function PATCH(req, { params }) {
+export async function PATCH(req, ctx) {
+  const params = await ctx.params;
   if (!ra.requireAdmin(req)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   const cur = dbm.getRemoteCode(params.id);
   if (!cur) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
@@ -48,7 +49,8 @@ export async function PATCH(req, { params }) {
 }
 
 // Delete a code — drops its live sessions but keeps the audit trail.
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   if (!ra.requireAdmin(req)) return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
   if (!dbm.getRemoteCode(params.id)) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   dbm.deleteRemoteCode(params.id);

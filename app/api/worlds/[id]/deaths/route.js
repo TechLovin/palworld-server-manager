@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 // GET: recent deaths + whether the PSMDeathRelay mod / UE4SS are installed for this world.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "deaths" });
@@ -46,7 +47,8 @@ export async function GET(req, { params }) {
 }
 
 // POST: install the bundled PSMDeathRelay UE4SS mod into this world's server.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "deaths", action: "deaths.installMod", mutating: true });
@@ -64,7 +66,8 @@ export async function POST(req, { params }) {
 }
 
 // DELETE: remove the death relay mod (escape hatch if a Palworld update breaks it).
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "deaths", action: "deaths.removeMod", mutating: true });

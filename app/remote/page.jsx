@@ -77,7 +77,7 @@ export default function RemoteEntry() {
 
       <div onPaste={onPaste} style={{ display: "flex", gap: "0.5rem", justifyContent: "center", margin: "1.6rem 0 0.6rem" }}>
         {digits.map((d, i) => (
-          <input key={i} ref={(el) => (inputs.current[i] = el)}
+          <input key={i} ref={(el) => { inputs.current[i] = el; }}
             value={d} inputMode="numeric" maxLength={1} disabled={busy || locked}
             onChange={(e) => setDigit(i, e.target.value)}
             onKeyDown={(e) => { onKey(i, e); if (e.key === "Enter") submit(); }}

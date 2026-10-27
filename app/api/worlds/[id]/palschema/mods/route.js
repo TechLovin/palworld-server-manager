@@ -12,7 +12,8 @@ export const runtime = "nodejs";
 //   { action: "toggle", name, enabled }
 //   { action: "remove", name }
 // Mods load at server boot, so changes are refused while the world is running.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "palschema.mods", mutating: true });

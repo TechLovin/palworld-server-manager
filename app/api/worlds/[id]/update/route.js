@@ -3,7 +3,8 @@ const { startUpdateJob } = require("@/lib/scheduler");
 const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "overview", action: "world.update", mutating: true });
   if (denied) return denied;
   const jobId = startUpdateJob(params.id);

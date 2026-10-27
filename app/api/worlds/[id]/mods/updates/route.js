@@ -6,7 +6,8 @@ export const runtime = "nodejs";
 
 // GET — compare each installed mod's Info.json Version against Steam's copy of the
 // same Workshop item. Read-only: nothing is copied until the user asks.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods" });
   if (denied) return denied;
   try { return NextResponse.json({ ok: true, checked: Date.now(), updates: mods.checkWorkshopUpdates(params.id) }); }
@@ -15,7 +16,8 @@ export async function GET(req, { params }) {
 
 // POST { folder } — re-copy that one mod from Steam. POST {} — re-copy every mod
 // that a fresh check says is out of date.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "mods.update", mutating: true });
   if (denied) return denied;
   try {

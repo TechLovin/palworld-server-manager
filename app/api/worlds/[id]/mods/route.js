@@ -4,7 +4,8 @@ const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods" });
   if (denied) return denied;
   try { return NextResponse.json({ ok: true, ...mods.status(params.id) }); }
@@ -12,7 +13,8 @@ export async function GET(req, { params }) {
 }
 
 // DELETE ?pkg=<packageName|folder> — remove a mod
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "mods", action: "mods.remove", mutating: true });
   if (denied) return denied;
   const pkg = new URL(req.url).searchParams.get("pkg");

@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 
 // GET: everything the UI needs, minus the token. publicConfig() is the only shape that
 // ever crosses this line — the token goes in and never comes back out.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   boot();
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
@@ -35,7 +36,8 @@ export async function GET(req, { params }) {
 }
 
 // POST: save a token, toggle the bot, or edit the allowlist.
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   boot();
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
@@ -160,7 +162,8 @@ export async function POST(req, { params }) {
 }
 
 // DELETE: forget the bot entirely, token included.
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   boot();
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });

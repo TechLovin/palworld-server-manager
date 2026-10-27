@@ -11,7 +11,8 @@ export const runtime = "nodejs";
 // world's stored join history (sessions table), with the DailyLoginRewards mod's own
 // streak numbers merged in when its players.json is available (so the two stay in
 // sync). Kept off the every-5s world GET so the Players tab only pays for it while open.
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "players" });
@@ -75,7 +76,8 @@ export async function GET(req, { params }) {
 // leftover platform/account-name row from the Player Activity board. Body: { id?, name }.
 // Mod-only rows (id "mod:…") have no stored history to delete — those live in the mod's own
 // players.json — so the caller keeps its × off them.
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "players", action: "players.purge", mutating: true });

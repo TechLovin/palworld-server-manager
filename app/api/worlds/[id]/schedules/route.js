@@ -7,7 +7,8 @@ const ra = require("@/lib/remoteauth");
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "schedule" });
   if (denied) return denied;
   return NextResponse.json({ ok: true, schedules: dbm.listSchedules(params.id) });
@@ -18,7 +19,8 @@ const MODES = ["interval", "daily", "minutes", "on_join"];
 const MESSAGE_JOBS = ["system_message", "onscreen_notice"];
 const HTTP_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
-export async function POST(req, { params }) {
+export async function POST(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "schedule", action: "schedule.create", mutating: true });
   if (denied) return denied;
   const b = await req.json();
@@ -91,7 +93,8 @@ export async function POST(req, { params }) {
 
 // Toggle a schedule's one-shot "skip the next run" flag. Only mutates schedules that
 // belong to this world, so a stray id can't touch another world's rules.
-export async function PATCH(req, { params }) {
+export async function PATCH(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "schedule", action: "schedule.update", mutating: true });
   if (denied) return denied;
   const b = await req.json();
@@ -103,7 +106,8 @@ export async function PATCH(req, { params }) {
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "schedule", action: "schedule.delete", mutating: true });
   if (denied) return denied;
   const id = new URL(req.url).searchParams.get("sid");

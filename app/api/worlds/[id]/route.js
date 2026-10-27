@@ -26,7 +26,8 @@ function tabForWorldPatch(patch) {
   return "admin";
 }
 
-export async function GET(req, { params }) {
+export async function GET(req, ctx) {
+  const params = await ctx.params;
   boot(); // make sure the background presence poller (join/leave) is running
   let w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
@@ -68,7 +69,8 @@ export async function GET(req, { params }) {
   });
 }
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const patch = await req.json();
@@ -179,7 +181,8 @@ export async function PATCH(req, { params }) {
   return NextResponse.json({ ok: true, world: updated });
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req, ctx) {
+  const params = await ctx.params;
   const w = dbm.getWorld(params.id);
   if (!w) return NextResponse.json({ ok: false, error: "not found" }, { status: 404 });
   const denied = ra.guardResponse(req, { worldId: params.id, tab: "admin", action: "world.delete", mutating: true });
